@@ -31,5 +31,9 @@ func FILE(FILEName string, INFO string) {
 		return
 	}
 	defer file.Close()
-	file.WriteString(INFO)
+
+	_, err = file.WriteString(INFO)
+	if err != nil {
+		return
+	}
 }
