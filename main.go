@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"os/user"
+	"path/filepath"
 )
 
 var tpl = template.Must(template.ParseFiles("templates/index.html"))
@@ -25,7 +27,17 @@ func Osn(w http.ResponseWriter, r *http.Request) {
 }
 
 func FILE(FILEName string, INFO string) {
-	file, err := os.Create(FILEName)
+	userInfo, err := user.Current()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	downloadsPath := filepath.Join(userInfo.HomeDir, "Downloads")
+
+	filepath := filepath.Join(downloadsPath, FILEName)
+
+	file, err := os.Create(filepath)
 	if err != nil {
 		fmt.Println(err)
 		return
