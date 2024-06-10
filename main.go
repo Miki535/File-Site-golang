@@ -2,28 +2,29 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
 )
 
-var tpl = template.Must(template.ParseFiles("templates/index.html"))
-
 func main() {
-	http.HandleFunc("/", Osn)
-	_ = http.ListenAndServe(":8080", nil)
-}
+	r := gin.Default()
 
-func Osn(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		filename := r.FormValue("filename")
-		info := r.FormValue("info")
+	r.LoadHTMLGlob("templates/*")
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{})
+	})
+	r.POST("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{})
+		filename := c.PostForm("filename")
+		info := c.PostForm("info")
 		FILE(filename, info)
-
-	}
-	tpl.Execute(w, nil)
+	})
+	r.Run(":8080")
 }
 
 func FILE(FILEName string, INFO string) {
